@@ -46,6 +46,35 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 });
+function applyVisibilityToggles() {
+  document.querySelector(".status-bar")?.classList.toggle(
+    "hidden",
+    !document.getElementById("showStatusBar")?.checked
+  );
+
+  document.querySelector(".topbar")?.classList.toggle(
+    "hidden",
+    !document.getElementById("showTopBar")?.checked
+  );
+
+  document.querySelector(".input-bar")?.classList.toggle(
+    "hidden",
+    !document.getElementById("showBottomBar")?.checked
+  );
+
+  document.querySelectorAll(".avatar, .topbar-avatar").forEach(el => {
+    el.classList.toggle(
+      "hidden",
+      !document.getElementById("showAvatar")?.checked
+    );
+  });
+}
+
+["showStatusBar", "showTopBar", "showBottomBar", "showAvatar"].forEach(id => {
+  document.getElementById(id)?.addEventListener("change", applyVisibilityToggles);
+});
+
+document.addEventListener("DOMContentLoaded", applyVisibilityToggles);
 
 /* ─── ELEMENTS ──────────────────────────────────── */
 const chatEl        = document.getElementById("chat");
