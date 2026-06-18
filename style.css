@@ -827,8 +827,12 @@ input[type="range"] {
 
 /* ─── RESPONSIVE ─── */
 @media (max-width: 800px) {
-  .app { grid-template-columns: 1fr; grid-template-rows: auto 1fr; }
-  .hidden {
-  display: none !important;
+  .app {
+    grid-template-columns: 1fr;
+    grid-template-rows: auto 1fr;
+  }
 }
+
+.hidden {
+  display: none !important;
 }
