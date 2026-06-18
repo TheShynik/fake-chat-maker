@@ -25,6 +25,27 @@ let currentTheme = "whatsapp";
 let currentBg = "wa-classic";
 let timers = [];
 let mediaRecorder, recordedChunks = [];
+let avatarImage = null;
+
+document.addEventListener("DOMContentLoaded", () => {
+  const avatarUpload = document.getElementById("avatarUpload");
+
+  if (avatarUpload) {
+    avatarUpload.addEventListener("change", e => {
+      const file = e.target.files[0];
+      if (!file) return;
+
+      const reader = new FileReader();
+
+      reader.onload = ev => {
+        avatarImage = new Image();
+        avatarImage.src = ev.target.result;
+      };
+
+      reader.readAsDataURL(file);
+    });
+  }
+});
 
 /* ─── ELEMENTS ──────────────────────────────────── */
 const chatEl        = document.getElementById("chat");
