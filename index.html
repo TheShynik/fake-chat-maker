@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Fake Chat Maker</title>
+  <link rel="stylesheet" href="style.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+</head>
+<body>
+
+<div class="app">
+
+  <!-- LEFT PANEL -->
+  <aside class="panel">
+    <div class="panel-header">
+      <h1>💬 Fake Chat Maker</h1>
+      <p class="hint">Build a WhatsApp / iMessage-style chat scene</p>
+    </div>
+
+    <!-- TABS -->
+    <div class="tabs">
+      <button class="tab active" data-tab="customize">Customize</button>
+      <button class="tab" data-tab="messages">Messages</button>
+      <button class="tab" data-tab="export">Export</button>
+    </div>
+
+    <!-- TAB: CUSTOMIZE -->
+    <div class="tab-panel active" id="tab-customize">
+
+      <div class="section-label">Theme</div>
+      <div class="theme-grid">
+        <button class="theme-btn active" data-theme="whatsapp" title="WhatsApp">
+          <span class="theme-icon">💚</span><span>WhatsApp</span>
+        </button>
+        <button class="theme-btn" data-theme="imessage" title="iMessage">
+          <span class="theme-icon">🔵</span><span>iMessage</span>
+        </button>
+        <button class="theme-btn" data-theme="telegram" title="Telegram">
+          <span class="theme-icon">✈️</span><span>Telegram</span>
+        </button>
+        <button class="theme-btn" data-theme="dark" title="Dark">
+          <span class="theme-icon">🌙</span><span>Dark</span>
+        </button>
+      </div>
+
+      <div class="section-label">Contact</div>
+      <div class="row-input">
+        <label>Name</label>
+        <input type="text" id="contactName" value="Sarah ❤️" maxlength="30" />
+      </div>
+      <div class="row-input">
+        <label>Avatar emoji</label>
+        <input type="text" id="contactEmoji" value="👩" maxlength="4" />
+      </div>
+      <div class="row-input">
+        <label>Status</label>
+        <input type="text" id="contactStatus" value="online" maxlength="30" />
+      </div>
+
+      <div class="section-label">Bubbles</div>
+      <div class="row-input">
+        <label>Their color</label>
+        <div class="color-row">
+          <input type="color" id="theirColor" value="#e5e5ea" />
+          <span id="theirColorVal">#e5e5ea</span>
+        </div>
+      </div>
+      <div class="row-input">
+        <label>Your color</label>
+        <div class="color-row">
+          <input type="color" id="myColor" value="#34c759" />
+          <span id="myColorVal">#34c759</span>
+        </div>
+      </div>
+      <div class="row-input">
+        <label>Bubble opacity</label>
+        <div class="slider-row">
+          <input type="range" id="bubbleOpacity" min="10" max="100" value="100" step="5" />
+          <span id="bubbleOpacityVal">100%</span>
+        </div>
+      </div>
+      <div class="row-input">
+        <label>Font size</label>
+        <div class="slider-row">
+          <input type="range" id="fontSize" min="12" max="28" value="17" />
+          <span id="fontSizeVal">17px</span>
+        </div>
+      </div>
+
+      <div class="section-label">Composition size</div>
+      <div class="row-input">
+        <label>Scale</label>
+        <div class="slider-row">
+          <input type="range" id="stageScale" min="30" max="120" value="70" step="5" />
+          <span id="stageScaleVal">70%</span>
+        </div>
+      </div>
+      <div class="row-input">
+        <label>Chat width (px)</label>
+        <div class="slider-row">
+          <input type="range" id="stageWidth" min="280" max="600" value="390" step="10" />
+          <span id="stageWidthVal">390px</span>
+        </div>
+      </div>
+
+      <div class="section-label">Background</div>
+      <div class="row-input">
+        <label>BG opacity</label>
+        <div class="slider-row">
+          <input type="range" id="bgOpacity" min="0" max="100" value="100" step="5" />
+          <span id="bgOpacityVal">100%</span>
+        </div>
+      </div>
+      <div class="bg-grid" id="bgGrid">
+        <div class="bg-swatch active" data-bg="wa-classic" title="WA Classic" style="background: #0a1628 url('https://i.imgur.com/placeholder.png')">🟢</div>
+        <div class="bg-swatch" data-bg="wa-beige" title="Beige">🟤</div>
+        <div class="bg-swatch" data-bg="galaxy" title="Galaxy">🔵</div>
+        <div class="bg-swatch" data-bg="white" title="White">⚪</div>
+        <div class="bg-swatch" data-bg="green-screen" title="Green Screen">🟩</div>
+        <div class="bg-swatch" data-bg="dark" title="Dark">⬛</div>
+      </div>
+
+    </div>
+
+    <!-- TAB: MESSAGES -->
+    <div class="tab-panel" id="tab-messages">
+
+      <div class="section-label">Conversation</div>
+      <div id="msgList" class="msg-list"></div>
+
+      <div class="add-btns">
+        <button id="addThem" class="btn-add them">+ Their message</button>
+        <button id="addMe" class="btn-add me">+ My message</button>
+        <button id="addEmoji" class="btn-add emoji">+ Big emoji</button>
+        <button id="addTyping" class="btn-add typing">+ Typing…</button>
+      </div>
+
+      <div class="section-label" style="margin-top:16px">Playback</div>
+      <div class="row-input">
+        <label>Delay between messages</label>
+        <div class="slider-row">
+          <input type="range" id="delayInput" min="300" max="3000" value="900" step="100" />
+          <span id="delayVal">900ms</span>
+        </div>
+      </div>
+      <div class="actions">
+        <button id="playBtn" class="btn-primary">▶ Preview</button>
+        <button id="resetBtn" class="btn-ghost">↺ Reset</button>
+      </div>
+    </div>
+
+    <!-- TAB: EXPORT -->
+    <div class="tab-panel" id="tab-export">
+      <div class="section-label">Video export</div>
+
+      <div class="open-tab-banner">
+        ⚠️ Export requires the app to be open <b>outside the preview iframe</b>.
+        <a id="openTabBtn" href="#" target="_blank" class="open-tab-link">Open in new tab ↗</a>
+      </div>
+
+      <p class="hint" style="margin-top:8px">Records the full animated conversation. Use <b>Green Screen</b> background to key it out in CapCut / Premiere.</p>
+
+      <div class="row-input">
+        <label>Output resolution</label>
+        <select id="exportRes">
+          <option value="1920x1080">1920 × 1080 — Full HD (landscape)</option>
+          <option value="1280x720">1280 × 720 — HD (landscape)</option>
+          <option value="3840x2160">3840 × 2160 — 4K (landscape)</option>
+          <option value="1080x1920">1080 × 1920 — Full HD (portrait / 9:16)</option>
+          <option value="1080x1080">1080 × 1080 — Square</option>
+          <option value="source">Source size (chat only)</option>
+        </select>
+      </div>
+
+      <div class="row-input">
+        <label>Chat position</label>
+        <select id="exportPos">
+          <option value="center">Center</option>
+          <option value="left">Left</option>
+          <option value="right">Right</option>
+          <option value="top-left">Top-left</option>
+          <option value="top-right">Top-right</option>
+          <option value="bottom-left">Bottom-left</option>
+          <option value="bottom-right">Bottom-right</option>
+        </select>
+      </div>
+
+      <div class="row-input">
+        <label>Background for export</label>
+        <select id="exportBg">
+          <option value="green-screen">Green Screen</option>
+          <option value="wa-classic">WA Classic</option>
+          <option value="wa-beige">WA Beige</option>
+          <option value="galaxy">Galaxy</option>
+          <option value="dark">Dark</option>
+          <option value="white">White</option>
+        </select>
+      </div>
+
+      <div id="exportStatus" class="export-status" style="display:none"></div>
+
+      <div class="actions">
+        <button id="exportBtn" class="btn-primary">⬇ Export WebM</button>
+      </div>
+
+      <p class="small">Chrome or Edge required. If the button does nothing, open the app in a new tab first.</p>
+    </div>
+  </aside>
+
+  <!-- RIGHT: PHONE PREVIEW -->
+  <div class="stage-wrap">
+    <div id="stage" class="stage bg-wa-classic">
+      <div class="phone" id="phone">
+
+        <!-- STATUS BAR -->
+        <div class="status-bar">
+          <span id="clockDisplay">9:41</span>
+          <div class="status-icons">
+            <span>●●●</span>
+            <span>WiFi</span>
+            <span>🔋</span>
+          </div>
+        </div>
+
+        <!-- TOPBAR -->
+        <div class="topbar">
+          <div class="back-btn">‹</div>
+          <div class="contact-avatar" id="topbarAvatar">👩</div>
+          <div class="contact-info">
+            <div class="contact-name" id="topbarName">Sarah ❤️</div>
+            <div class="contact-status" id="topbarStatus">online</div>
+          </div>
+          <div class="topbar-icons">
+            <span class="icon-btn">📞</span>
+            <span class="icon-btn">⋮</span>
+          </div>
+        </div>
+
+        <!-- CHAT AREA -->
+        <div class="chat" id="chat"></div>
+
+        <!-- INPUT BAR -->
+        <div class="input-bar">
+          <div class="emoji-trigger" id="emojiTrigger">😊</div>
+          <div class="fake-input" id="fakeInput" contenteditable="true" data-placeholder="Message…"></div>
+          <div class="send-area">
+            <span class="attach-btn">📎</span>
+            <button class="send-btn" id="sendBtn">➤</button>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- emoji picker popup -->
+    <div class="emoji-picker" id="emojiPicker">
+      <div class="emoji-search">
+        <input type="text" id="emojiSearch" placeholder="Search emoji…" />
+      </div>
+      <div class="emoji-grid" id="emojiGrid"></div>
+    </div>
+  </div>
+
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script src="script.js"></script>
+</body>
+</html>
