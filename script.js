@@ -46,32 +46,34 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 });
+
 function applyVisibilityToggles() {
-  document.querySelector(".status-bar")?.classList.toggle(
-    "hidden",
-    !document.getElementById("showStatusBar")?.checked
-  );
+  const statusBar = document.querySelector(".status-bar");
+  const topBar = document.querySelector(".topbar");
+  const inputBar = document.querySelector(".input-bar");
 
-  document.querySelector(".topbar")?.classList.toggle(
-    "hidden",
-    !document.getElementById("showTopBar")?.checked
-  );
+  if (statusBar) {
+    statusBar.style.display = document.getElementById("showStatusBar")?.checked ? "flex" : "none";
+  }
 
-  document.querySelector(".input-bar")?.classList.toggle(
-    "hidden",
-    !document.getElementById("showBottomBar")?.checked
-  );
+  if (topBar) {
+    topBar.style.display = document.getElementById("showTopBar")?.checked ? "flex" : "none";
+  }
+
+  if (inputBar) {
+    inputBar.style.display = document.getElementById("showBottomBar")?.checked ? "flex" : "none";
+  }
 
   document.querySelectorAll(".avatar, .topbar-avatar").forEach(el => {
-    el.classList.toggle(
-      "hidden",
-      !document.getElementById("showAvatar")?.checked
-    );
+    el.style.display = document.getElementById("showAvatar")?.checked ? "block" : "none";
   });
 }
 
 ["showStatusBar", "showTopBar", "showBottomBar", "showAvatar"].forEach(id => {
-  document.getElementById(id)?.addEventListener("change", applyVisibilityToggles);
+  const el = document.getElementById(id);
+  if (el) {
+    el.addEventListener("change", applyVisibilityToggles);
+  }
 });
 
 document.addEventListener("DOMContentLoaded", applyVisibilityToggles);
@@ -1029,17 +1031,17 @@ document.getElementById("exportBtn").addEventListener("click", () => {
 
     ctx.restore();
 
-   if (document.getElementById("showStatusBar")?.checked) {
-  drawStatusBar();
-}
+    if (document.getElementById("showStatusBar")?.checked) {
+      drawStatusBar();
+    }
 
-if (document.getElementById("showTopBar")?.checked) {
-  drawTopbar();
-}
+    if (document.getElementById("showTopBar")?.checked) {
+      drawTopbar();
+    }
 
-if (document.getElementById("showBottomBar")?.checked) {
-  drawInputBar();
-}
+    if (document.getElementById("showBottomBar")?.checked) {
+      drawInputBar();
+    }
 
     requestAnimationFrame(frame);
   }
