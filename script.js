@@ -423,12 +423,6 @@ function createBubble(msg) {
 
   wrap.appendChild(b);
 
-  const time = document.createElement("div");
-  time.className = "bubble-time";
-  const now = new Date();
-  time.textContent = `${now.getHours().toString().padStart(2,"0")}:${now.getMinutes().toString().padStart(2,"0")}`;
-  wrap.appendChild(time);
-
   return wrap;
 }
 
@@ -645,7 +639,6 @@ document.getElementById("exportBtn").addEventListener("click", () => {
   const THEM_COL = `rgba(${themRgb.r},${themRgb.g},${themRgb.b},${bubbleAlpha})`;
   const ME_TEXT   = hexLuminance(myColorEl.value)   > 0.4 ? "#111" : "#fff";
   const THEM_TEXT = hexLuminance(theirColorEl.value) > 0.4 ? "#111" : "#fff";
-  const TS_COL    = CHAT_BG_COL[exportBgVal] === "#ece5dd" ? "#666" : "#aaa";
 
   // ── Scaled metrics ────────────────────────────────
   const ST_H   = Math.round(28 * S);   // status bar
@@ -658,13 +651,10 @@ document.getElementById("exportBtn").addEventListener("click", () => {
   const AV_R   = Math.round(17 * S);   // avatar radius
   const MSG_GAP = Math.round(6  * S);  // same-sender gap
   const SND_GAP = Math.round(14 * S);  // different-sender gap
-  const TS_H   = Math.round(15 * S);   // timestamp row height
-  const TS_GAP = Math.round(3  * S);   // bubble → timestamp gap
 
   const FSIZE_VAL = Number(fontSizeEl.value || 17);
   const FSIZE = Math.round(FSIZE_VAL * S);
   const LH_PX = Math.round(FSIZE_VAL * 1.38 * S); // line-height in px
-  const SSIZE = Math.round(11 * S);
 
   const CHAT_TOP = OY + ST_H + TB_H + Math.round(8 * S);
   const CHAT_BOT = OY + drawnH - IN_H - Math.round(8 * S);
@@ -720,12 +710,12 @@ document.getElementById("exportBtn").addEventListener("click", () => {
   // ── Bubble Y positions (bottom-anchored) ──────────
   // Walk backwards from the bottom of the chat area
   const bubbleY = new Array(messages.length);
-  let y = CHAT_BOT - TS_H - TS_GAP - measured[messages.length - 1]?.h;
+  let y = CHAT_BOT - measured[messages.length - 1]?.h;
   bubbleY[messages.length - 1] = y;
   for (let i = messages.length - 2; i >= 0; i--) {
     const sameSender = messages[i].type === messages[i+1].type;
     const gap = sameSender ? MSG_GAP : SND_GAP;
-    y -= gap + measured[i].h + TS_GAP + TS_H;
+    y -= gap + measured[i].h;
     bubbleY[i] = y;
   }
   // Clamp: don't let first bubble go above chat area top
@@ -961,21 +951,6 @@ document.getElementById("exportBtn").addEventListener("click", () => {
     }
   }
 
-  function drawTimestamp(i, alpha2) {
-    if (messages[i].type === "typing") return;
-    const isMe = messages[i].type === "me";
-    const ty = bubbleY[i] + measured[i].h + TS_GAP;
-    const now = new Date();
-    const t = `${now.getHours().toString().padStart(2,"0")}:${now.getMinutes().toString().padStart(2,"0")}`;
-    ctx.fillStyle = TS_COL;
-    ctx.font = `${SSIZE}px Inter, system-ui, sans-serif`;
-    ctx.textBaseline = "top";
-    ctx.globalAlpha = 0.7 * alpha2;
-    if (isMe) { ctx.textAlign = "right"; ctx.fillText(t, OX + drawnW - PAD, ty); }
-    else       { ctx.textAlign = "left";  ctx.fillText(t, THEM_BX, ty); }
-    ctx.globalAlpha = 1;
-  }
-
   // ── Animation state ───────────────────────────────
   const POP_DUR  = 260;
   const DELAY    = Number(delayEl.value) || 900;
@@ -1026,7 +1001,6 @@ document.getElementById("exportBtn").addEventListener("click", () => {
     for (let i = 0; i <= curMsg && i < messages.length; i++) {
       const prog = i < curMsg ? 1 : popProg;
       drawBubble(i, prog);
-      if (i < curMsg || phase === "hold" || phase === "done") drawTimestamp(i, i < curMsg ? 1 : popProg);
     }
 
     ctx.restore();
