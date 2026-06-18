@@ -1000,9 +1000,17 @@ document.getElementById("exportBtn").addEventListener("click", () => {
 
     ctx.restore();
 
-    drawStatusBar();
-    drawTopbar();
-    drawInputBar();
+   if (document.getElementById("showStatusBar")?.checked) {
+  drawStatusBar();
+}
+
+if (document.getElementById("showTopBar")?.checked) {
+  drawTopbar();
+}
+
+if (document.getElementById("showBottomBar")?.checked) {
+  drawInputBar();
+}
 
     requestAnimationFrame(frame);
   }
