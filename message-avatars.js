@@ -6,7 +6,6 @@
   };
 
   const $ = id => document.getElementById(id);
-  const stageEl = $("stage");
 
   function injectStyles() {
     const style = document.createElement("style");
@@ -253,179 +252,11 @@
     setTimeout(replayPreview, 80);
   }
 
-  function supportedVideoFormat() {
-    const formats = [
-      { mime: "video/mp4; codecs=avc1.42E01E", ext: "mp4", label: "MP4 H.264" },
-      { mime: "video/mp4; codecs=avc1", ext: "mp4", label: "MP4 H.264" },
-      { mime: "video/mp4", ext: "mp4", label: "MP4" },
-      { mime: "video/webm; codecs=vp9", ext: "webm", label: "WebM VP9" },
-      { mime: "video/webm; codecs=vp8", ext: "webm", label: "WebM VP8" },
-      { mime: "video/webm", ext: "webm", label: "WebM" },
-    ];
-
-    return formats.find(f => MediaRecorder.isTypeSupported(f.mime));
-  }
-
-  function solidBg(name, outer = false) {
-    const map = outer ? {
-      "wa-classic": "#080d10",
-      "wa-beige": "#d4c9c0",
-      galaxy: "#020408",
-      white: "#dadada",
-      "green-screen": "#00cc00",
-      dark: "#0a0a0a",
-    } : {
-      "wa-classic": "#0b141a",
-      "wa-beige": "#ece5dd",
-      galaxy: "#0a0e27",
-      white: "#f5f5f5",
-      "green-screen": "#00ff00",
-      dark: "#1a1a1a",
-    };
-
-    return map[name] || map["wa-classic"];
-  }
-
-  async function captureStageFrame() {
-    if (!window.html2canvas || !stageEl) return null;
-
-    const previousTransform = stageEl.style.transform;
-    stageEl.style.transform = "none";
-    await new Promise(requestAnimationFrame);
-
-    const frame = await html2canvas(stageEl, {
-      backgroundColor: null,
-      scale: 2,
-      useCORS: true,
-      allowTaint: true,
-      logging: false,
-    });
-
-    stageEl.style.transform = previousTransform;
-    return frame;
-  }
-
-  async function exportWithDomCapture() {
-    const exportBtn = $("exportBtn");
-    const exportStatus = $("exportStatus");
-    if (!exportBtn || exportBtn.disabled) return;
-
-    const format = supportedVideoFormat();
-    if (!format) {
-      if (exportStatus) {
-        exportStatus.style.display = "block";
-        exportStatus.textContent = "❌ No supported video format. Try Chrome or Edge.";
-      }
-      return;
-    }
-
-    const resVal = $("exportRes")?.value || "source";
-    const posVal = $("exportPos")?.value || "center";
-    const bgVal = $("exportBg")?.value || "wa-classic";
-
-    const chatW = stageEl.offsetWidth || 390;
-    const chatH = stageEl.offsetHeight || 844;
-    let canvasW, canvasH;
-
-    if (resVal === "source") {
-      canvasW = chatW;
-      canvasH = chatH;
-    } else {
-      [canvasW, canvasH] = resVal.split("x").map(Number);
-    }
-
-    const scale = Math.min(canvasW / chatW, canvasH / chatH);
-    const drawnW = Math.round(chatW * scale);
-    const drawnH = Math.round(chatH * scale);
-    const pad = 24;
-    const posMap = {
-      center: [Math.round((canvasW - drawnW) / 2), Math.round((canvasH - drawnH) / 2)],
-      left: [pad, Math.round((canvasH - drawnH) / 2)],
-      right: [canvasW - drawnW - pad, Math.round((canvasH - drawnH) / 2)],
-      "top-left": [pad, pad],
-      "top-right": [canvasW - drawnW - pad, pad],
-      "bottom-left": [pad, canvasH - drawnH - pad],
-      "bottom-right": [canvasW - drawnW - pad, canvasH - drawnH - pad],
-    };
-    const [ox, oy] = posMap[posVal] || posMap.center;
-
-    const canvas = document.createElement("canvas");
-    canvas.width = canvasW;
-    canvas.height = canvasH;
-    const ctx = canvas.getContext("2d");
-    const stream = canvas.captureStream(30);
-    const chunks = [];
-    const recorder = new MediaRecorder(stream, { mimeType: format.mime, videoBitsPerSecond: 24_000_000 });
-
-    recorder.ondataavailable = e => {
-      if (e.data.size > 0) chunks.push(e.data);
-    };
-
-    recorder.onstop = () => {
-      const blob = new Blob(chunks, { type: format.mime });
-      const a = document.createElement("a");
-      a.href = URL.createObjectURL(blob);
-      a.download = `chat-${canvasW}x${canvasH}.${format.ext}`;
-      a.click();
-      URL.revokeObjectURL(a.href);
-      exportBtn.disabled = false;
-      exportBtn.textContent = `⬇ Export ${format.label}`;
-      if (exportStatus) {
-        exportStatus.style.display = "block";
-        exportStatus.textContent = `✅ Done! ${canvasW}×${canvasH} ${format.label}`;
-      }
-    };
-
-    exportBtn.disabled = true;
-    exportBtn.textContent = "⏺ Recording…";
-    if (exportStatus) {
-      exportStatus.style.display = "block";
-      exportStatus.textContent = "⏳ Rendering with message avatars…";
-    }
-
-    replayPreview();
-    recorder.start();
-
-    const delay = Number($("delayInput")?.value || 900);
-    const count = Array.isArray(window.messages) ? window.messages.length : document.querySelectorAll(".msg-row").length || 8;
-    const duration = 900 + count * delay + 260 * count + 1800;
-    const startedAt = performance.now();
-
-    async function frame() {
-      ctx.fillStyle = solidBg(bgVal, true);
-      ctx.fillRect(0, 0, canvasW, canvasH);
-      ctx.fillStyle = solidBg(bgVal, false);
-      ctx.fillRect(ox, oy, drawnW, drawnH);
-
-      const shot = await captureStageFrame();
-      if (shot) ctx.drawImage(shot, ox, oy, drawnW, drawnH);
-
-      if (performance.now() - startedAt < duration) {
-        setTimeout(frame, 1000 / 30);
-      } else {
-        recorder.stop();
-      }
-    }
-
-    frame();
-  }
-
-  function patchExportButton() {
-    const oldBtn = $("exportBtn");
-    if (!oldBtn || oldBtn.dataset.messageAvatarExport === "true") return;
-
-    const newBtn = oldBtn.cloneNode(true);
-    newBtn.dataset.messageAvatarExport = "true";
-    oldBtn.replaceWith(newBtn);
-    newBtn.addEventListener("click", exportWithDomCapture);
-  }
-
   document.addEventListener("DOMContentLoaded", () => {
     injectStyles();
     setupTopbarEmojiFallback();
     injectControls();
     patchPreview();
-    patchExportButton();
     applyTopbarAvatar();
   });
 })();
