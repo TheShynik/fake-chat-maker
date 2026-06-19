@@ -1,0 +1,4 @@
+.bubble.me::after {
+  content: none !important;
+  display: none !important;
+}
