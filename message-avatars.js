@@ -3,11 +3,11 @@
     enabled: true,
     themDataUrl: "",
     meDataUrl: "",
+    topbarDataUrl: "",
   };
 
   const $ = id => document.getElementById(id);
   const stageEl = $("stage");
-  const chatEl = $("chat");
 
   function injectStyles() {
     const style = document.createElement("style");
@@ -22,7 +22,8 @@
         gap: 8px;
       }
 
-      .message-avatar-controls .row-input input[type="file"] {
+      .message-avatar-controls .row-input input[type="file"],
+      .row-input input[type="file"] {
         width: 100%;
         background: var(--input-bg);
         border: 1px solid var(--panel-border);
@@ -30,6 +31,17 @@
         padding: 7px 8px;
         color: var(--text-muted);
         font-size: 12px;
+      }
+
+      .contact-avatar {
+        overflow: hidden;
+      }
+
+      .contact-avatar img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        display: block;
       }
 
       .bubble-wrap.with-message-avatar {
@@ -84,6 +96,39 @@
     document.head.appendChild(style);
   }
 
+  function applyTopbarAvatar(dataUrl = "") {
+    const topbarAvatar = $("topbarAvatar");
+    if (!topbarAvatar) return;
+
+    topbarAvatar.innerHTML = "";
+
+    const src = dataUrl || state.topbarDataUrl || state.themDataUrl;
+    if (src) {
+      const img = document.createElement("img");
+      img.src = src;
+      img.alt = "Top bar avatar";
+      topbarAvatar.appendChild(img);
+    } else {
+      topbarAvatar.textContent = $("contactEmoji")?.value || "👤";
+    }
+  }
+
+  function setupTopbarAvatarUpload() {
+    setupAvatarUpload("avatarUpload", dataUrl => {
+      state.topbarDataUrl = dataUrl;
+      applyTopbarAvatar(dataUrl);
+    });
+
+    const contactEmoji = $("contactEmoji");
+    if (contactEmoji) {
+      contactEmoji.addEventListener("input", () => {
+        if (!state.topbarDataUrl && !state.themDataUrl) {
+          applyTopbarAvatar("");
+        }
+      });
+    }
+  }
+
   function injectControls() {
     const fontSizeRow = $("fontSize")?.closest(".row-input");
     if (!fontSizeRow || $("showMessageAvatars")) return;
@@ -117,6 +162,7 @@
 
     setupAvatarUpload("themMessageAvatarUpload", dataUrl => {
       state.themDataUrl = dataUrl;
+      applyTopbarAvatar(dataUrl);
       replayPreview();
     });
 
@@ -390,8 +436,10 @@
 
   document.addEventListener("DOMContentLoaded", () => {
     injectStyles();
+    setupTopbarAvatarUpload();
     injectControls();
     patchPreview();
     patchExportButton();
+    applyTopbarAvatar();
   });
 })();
