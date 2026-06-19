@@ -4,8 +4,8 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Fake Chat Maker</title>
-  <link rel="stylesheet" href="style.css" />
-  <link rel="stylesheet" href="hide-message-marks.css" />
+  <link rel="stylesheet" href="style.css?v=stable-export" />
+  <link rel="stylesheet" href="hide-message-marks.css?v=stable-export" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
 </head>
@@ -56,32 +56,32 @@
         <input type="text" id="contactEmoji" value="👩" maxlength="4" />
       </div>
       <div class="row-input">
-  <label>
-    <input type="checkbox" id="showStatusBar" checked>
-    Show Status Bar
-  </label>
-</div>
+        <label>
+          <input type="checkbox" id="showStatusBar" checked>
+          Show Status Bar
+        </label>
+      </div>
 
-<div class="row-input">
-  <label>
-    <input type="checkbox" id="showTopBar" checked>
-    Show Top Bar
-  </label>
-</div>
+      <div class="row-input">
+        <label>
+          <input type="checkbox" id="showTopBar" checked>
+          Show Top Bar
+        </label>
+      </div>
 
-<div class="row-input">
-  <label>
-    <input type="checkbox" id="showBottomBar" checked>
-    Show Bottom Bar
-  </label>
-</div>
+      <div class="row-input">
+        <label>
+          <input type="checkbox" id="showBottomBar" checked>
+          Show Bottom Bar
+        </label>
+      </div>
 
-<div class="row-input">
-  <label>
-    <input type="checkbox" id="showAvatar" checked>
-    Show Avatar
-  </label>
-</div>
+      <div class="row-input">
+        <label>
+          <input type="checkbox" id="showAvatar" checked>
+          Show Avatar
+        </label>
+      </div>
       <div class="row-input">
         <label>Status</label>
         <input type="text" id="contactStatus" value="online" maxlength="30" />
@@ -183,7 +183,7 @@
         <a id="openTabBtn" href="#" target="_blank" class="open-tab-link">Open in new tab ↗</a>
       </div>
 
-      <p class="hint" style="margin-top:8px">Records the full animated conversation. Use <b>Green Screen</b> background to key it out in CapCut / Premiere.</p>
+      <p class="hint" style="margin-top:8px">Records the full animated conversation using the current chat background.</p>
 
       <div class="row-input">
         <label>Output resolution</label>
@@ -210,17 +210,7 @@
         </select>
       </div>
 
-      <div class="row-input">
-        <label>Background for export</label>
-        <select id="exportBg">
-          <option value="green-screen">Green Screen</option>
-          <option value="wa-classic">WA Classic</option>
-          <option value="wa-beige">WA Beige</option>
-          <option value="galaxy">Galaxy</option>
-          <option value="dark">Dark</option>
-          <option value="white">White</option>
-        </select>
-      </div>
+      <input type="hidden" id="exportBg" value="wa-classic" />
 
       <div id="exportStatus" class="export-status" style="display:none"></div>
 
@@ -289,7 +279,7 @@
 </div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-<script src="script.js"></script>
-<script src="message-avatars.js"></script>
+<script src="script.js?v=stable-export"></script>
+<script src="message-avatars.js?v=stable-export"></script>
 </body>
 </html>
