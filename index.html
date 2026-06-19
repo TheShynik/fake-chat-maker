@@ -138,13 +138,8 @@
       </div>
 
       <div class="section-label">Background</div>
-      <div class="row-input">
-        <label>BG opacity</label>
-        <div class="slider-row">
-          <input type="range" id="bgOpacity" min="0" max="100" value="100" step="5" />
-          <span id="bgOpacityVal">100%</span>
-        </div>
-      </div>
+      <input type="hidden" id="bgOpacity" value="100" />
+      <span id="bgOpacityVal" class="hidden">100%</span>
       <div class="bg-grid" id="bgGrid">
         <div class="bg-swatch active" data-bg="wa-classic" title="WA Classic" style="background: #0a1628 url('https://i.imgur.com/placeholder.png')">🟢</div>
         <div class="bg-swatch" data-bg="wa-beige" title="Beige">🟤</div>
