@@ -3,7 +3,6 @@
     enabled: true,
     themDataUrl: "",
     meDataUrl: "",
-    topbarDataUrl: "",
   };
 
   const $ = id => document.getElementById(id);
@@ -22,8 +21,7 @@
         gap: 8px;
       }
 
-      .message-avatar-controls .row-input input[type="file"],
-      .row-input input[type="file"] {
+      .message-avatar-controls .row-input input[type="file"] {
         width: 100%;
         background: var(--input-bg);
         border: 1px solid var(--panel-border);
@@ -96,16 +94,15 @@
     document.head.appendChild(style);
   }
 
-  function applyTopbarAvatar(dataUrl = "") {
+  function applyTopbarAvatar() {
     const topbarAvatar = $("topbarAvatar");
     if (!topbarAvatar) return;
 
     topbarAvatar.innerHTML = "";
 
-    const src = dataUrl || state.topbarDataUrl || state.themDataUrl;
-    if (src) {
+    if (state.meDataUrl) {
       const img = document.createElement("img");
-      img.src = src;
+      img.src = state.meDataUrl;
       img.alt = "Top bar avatar";
       topbarAvatar.appendChild(img);
     } else {
@@ -113,18 +110,11 @@
     }
   }
 
-  function setupTopbarAvatarUpload() {
-    setupAvatarUpload("avatarUpload", dataUrl => {
-      state.topbarDataUrl = dataUrl;
-      applyTopbarAvatar(dataUrl);
-    });
-
+  function setupTopbarEmojiFallback() {
     const contactEmoji = $("contactEmoji");
     if (contactEmoji) {
       contactEmoji.addEventListener("input", () => {
-        if (!state.topbarDataUrl && !state.themDataUrl) {
-          applyTopbarAvatar("");
-        }
+        if (!state.meDataUrl) applyTopbarAvatar();
       });
     }
   }
@@ -162,12 +152,12 @@
 
     setupAvatarUpload("themMessageAvatarUpload", dataUrl => {
       state.themDataUrl = dataUrl;
-      applyTopbarAvatar(dataUrl);
       replayPreview();
     });
 
     setupAvatarUpload("meMessageAvatarUpload", dataUrl => {
       state.meDataUrl = dataUrl;
+      applyTopbarAvatar();
       replayPreview();
     });
   }
@@ -231,10 +221,6 @@
       const onlyEmoji = window.isOnlyEmoji ? window.isOnlyEmoji(msg.text) : false;
       content.className = `bubble ${msg.type}${onlyEmoji ? " emoji-bubble" : ""}`;
       content.textContent = msg.text;
-
-      if (msg.type === "me" && !onlyEmoji) {
-        content.setAttribute("data-ticks", "✓✓");
-      }
     }
 
     if (!shouldShowAvatarFor(msg)) {
@@ -436,7 +422,7 @@
 
   document.addEventListener("DOMContentLoaded", () => {
     injectStyles();
-    setupTopbarAvatarUpload();
+    setupTopbarEmojiFallback();
     injectControls();
     patchPreview();
     patchExportButton();
